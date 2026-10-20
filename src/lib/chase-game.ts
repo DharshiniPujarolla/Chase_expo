@@ -96,7 +96,12 @@ export function answerQuestion(
   const correct = answer === question.answer;
   if (!correct) {
     return {
-      progress: { ...progress, streak: 0, misses: progress.misses + 1 },
+      progress: {
+        ...progress,
+        streak: 0,
+        misses: progress.misses + 1,
+        answered: [...progress.answered, question.id],
+      },
       correct: false,
       reward: 0,
     };

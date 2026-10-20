@@ -73,7 +73,7 @@ function GameHome() {
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [showHint, setShowHint] = useState(false);
   const [message, setMessage] = useState("");
-  const [missionStep, setMissionStep] = useState(0);
+  const [missionComplete, setMissionComplete] = useState(false);
   const [navigation, setNavigation] = useState("Town");
   const [question, setQuestion] = useState<PhysicsQuestion>(() => getNextQuestion(INITIAL_PROGRESS));
   const isPowered = progress.repair >= 100;
@@ -107,7 +107,7 @@ function GameHome() {
     setSelectedAnswer(null);
     setShowHint(false);
     setMessage("");
-    setMissionStep(0);
+    setMissionComplete(false);
     setQuestion(getNextQuestion(progress));
     setPanel("mission");
   }
@@ -128,15 +128,13 @@ function GameHome() {
 
   function continueMission() {
     if (isPowered) {
-      setMessage("The lights are on! Brightbridge is back in business.");
-      setMissionStep(2);
+      setMissionComplete(true);
       return;
     }
     setSelectedAnswer(null);
     setShowHint(false);
     setMessage("");
     setQuestion(getNextQuestion(progress));
-    setMissionStep((step) => step + 1);
   }
 
   function buyWorkshop() {
@@ -242,7 +240,7 @@ function GameHome() {
 
       <Dialog open={panel === "mission"} onOpenChange={(open) => { if (!open) setPanel(null); }}>
         <DialogContent className="game-dialog mission-dialog">
-          {missionStep === 2 ? (
+          {missionComplete ? (
             <div className="completion-screen">
               <span className="completion-medallion"><Lightbulb size={34} /></span>
               <span className="eyebrow">MISSION COMPLETE</span>
@@ -291,7 +289,7 @@ function GameHome() {
                   <div className="reward-note"><Sparkles size={14} /> Correct answer: <b>25 coins + 20 XP + a wire</b></div>
                 </>
               )}
-              {isPowered && <Button className="dialog-primary victory-button" onClick={() => { setMissionStep(2); setMessage(""); }}>CELEBRATE <Sparkles size={16} /></Button>}
+              {isPowered && <Button className="dialog-primary victory-button" onClick={() => setMissionComplete(true)}>CELEBRATE <Sparkles size={16} /></Button>}
             </>
           )}
         </DialogContent>
