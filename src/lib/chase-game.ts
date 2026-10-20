@@ -77,7 +77,10 @@ export const QUESTIONS: PhysicsQuestion[] = [
 ];
 
 export function getNextQuestion(progress: GameProgress): PhysicsQuestion {
-  const targetLevel = Math.min(3, Math.max(1, progress.level));
+  const targetLevel = Math.min(
+    3,
+    Math.max(1, progress.misses >= 2 ? progress.level - 1 : progress.level),
+  );
   const available = QUESTIONS.filter((question) => question.level <= targetLevel);
   const unseen = available.filter((question) => !progress.answered.includes(question.id));
   const pool = unseen.length > 0 ? unseen : available;

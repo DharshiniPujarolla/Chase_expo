@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   Bolt,
@@ -75,7 +75,7 @@ function GameHome() {
   const [message, setMessage] = useState("");
   const [missionStep, setMissionStep] = useState(0);
   const [navigation, setNavigation] = useState("Town");
-  const question: PhysicsQuestion = useMemo(() => getNextQuestion(progress), [progress]);
+  const [question, setQuestion] = useState<PhysicsQuestion>(() => getNextQuestion(INITIAL_PROGRESS));
   const isPowered = progress.repair >= 100;
 
   useEffect(() => {
@@ -83,7 +83,10 @@ function GameHome() {
       const saved = window.localStorage.getItem(SAVE_KEY);
       if (saved) {
         const parsed: unknown = JSON.parse(saved);
-        if (isValidProgress(parsed)) setProgress(parsed);
+        if (isValidProgress(parsed)) {
+          setProgress(parsed);
+          setQuestion(getNextQuestion(parsed));
+        }
       }
     } catch {
       // The game remains playable if storage is unavailable or malformed.
@@ -105,6 +108,7 @@ function GameHome() {
     setShowHint(false);
     setMessage("");
     setMissionStep(0);
+    setQuestion(getNextQuestion(progress));
     setPanel("mission");
   }
 
@@ -131,6 +135,7 @@ function GameHome() {
     setSelectedAnswer(null);
     setShowHint(false);
     setMessage("");
+    setQuestion(getNextQuestion(progress));
     setMissionStep((step) => step + 1);
   }
 
